@@ -1,0 +1,14 @@
+services:
+  wpa-sec:
+    build: .
+    image: wpa-sec-help-crack:latest
+    volumes:
+      - ./work:/work
+      - ./local:/local
+    working_dir: /work
+    stdin_open: true
+    tty: true
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    gpus: all

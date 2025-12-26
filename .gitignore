@@ -1,0 +1,4 @@
+work/*
+local/*
+!work/.gitkeep
+!local/.gitkeep
