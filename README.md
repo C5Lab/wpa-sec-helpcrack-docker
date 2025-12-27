@@ -142,6 +142,12 @@ Add hashcat options if needed (do not pass `-m` or backend flags):
 .\run_local.ps1 -ArgsLine "-O --session local"
 ```
 
+Use a specific wordlist file (relative paths are checked in `./work` and `./local`):
+
+```
+run_local.cmd --local rockyou.txt
+```
+
 Optimized kernels shortcut:
 
 ```

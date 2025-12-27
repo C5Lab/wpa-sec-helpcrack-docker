@@ -68,10 +68,6 @@ if [ ${#hashfiles[@]} -eq 0 ]; then
 fi
 
 wordlists=( "${WORD_DIR}"/*.txt "${WORD_DIR}"/*.dict "${WORD_DIR}"/*.lst "${WORD_DIR}"/*.gz )
-if [ ${#wordlists[@]} -eq 0 ]; then
-  warn "No wordlists found in ${WORD_DIR}."
-  exit 1
-fi
 
 estimate=0
 estimate_fast=0
@@ -82,6 +78,7 @@ show_estimate=0
 resume=0
 status_timer=0
 optimized=0
+custom_wordlist=""
 pass_args=()
 
 args=( "$@" )
@@ -115,6 +112,12 @@ for ((i=0; i<${#args[@]}; i++)); do
     --optimized)
       optimized=1
       ;;
+    --local|--wordlist)
+      if [ $((i+1)) -lt ${#args[@]} ]; then
+        custom_wordlist="${args[$((i+1))]}"
+        i=$((i+1))
+      fi
+      ;;
     --show-estimate)
       show_estimate=1
       ;;
@@ -130,6 +133,25 @@ for ((i=0; i<${#args[@]}; i++)); do
       ;;
   esac
 done
+
+if [ -n "${custom_wordlist}" ]; then
+  if [ "${custom_wordlist#/}" != "${custom_wordlist}" ]; then
+    wl_path="${custom_wordlist}"
+  elif [ -f "${WORD_DIR}/${custom_wordlist}" ]; then
+    wl_path="${WORD_DIR}/${custom_wordlist}"
+  elif [ -f "${PCAP_DIR}/${custom_wordlist}" ]; then
+    wl_path="${PCAP_DIR}/${custom_wordlist}"
+  elif [ -f "${custom_wordlist}" ]; then
+    wl_path="${custom_wordlist}"
+  else
+    warn "Wordlist not found: ${custom_wordlist}"
+    exit 1
+  fi
+  wordlists=( "${wl_path}" )
+elif [ ${#wordlists[@]} -eq 0 ]; then
+  warn "No wordlists found in ${WORD_DIR}."
+  exit 1
+fi
 
 rules=()
 if [ -d "${RULE_DIR}" ]; then
